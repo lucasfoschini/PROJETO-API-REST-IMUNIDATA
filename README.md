@@ -6,11 +6,10 @@
 
 ## 👥 Integrantes do Grupo
 
-| Nome | RA |
-|------|----|
-| Lucas Foschini | — |
-| Nilo de Souza | — |
-| Gabriel Pardo de Sena | — |
+| Nome |
+|------|
+| Lucas Foschini Nilo deSouza |
+| Gabriel Pardo de Sena |
 
 ---
 
