@@ -255,3 +255,54 @@ Body: { "municipio": "Campinas", "estado": "SP", "vacina": "BCG", "dose": "1ª D
 # Excluir
 DELETE http://localhost:8080/api/vacinacao/1
 ```
+
+---
+
+## 📸 Capturas de Tela
+
+### 1. Dashboard de Listagem
+> Tabela principal com todos os registros de vacinação, contadores no header e botões de ação.
+
+![Dashboard de Listagem](docs/screenshots/01-listagem.png)
+
+---
+
+### 2. Filtro por Tipo de Vacina
+> Campo de busca dinâmico filtrando registros pelo tipo de imunobiológico (ex: BCG) em tempo real via API.
+
+![Filtro por Vacina](docs/screenshots/02-filtro-vacina.png)
+
+---
+
+### 3. Filtro por Estado (UF)
+> Filtro por estado/região mostrando apenas os registros do estado selecionado (ex: SP).
+
+![Filtro por Estado](docs/screenshots/03-filtro-estado.png)
+
+---
+
+### 4. Formulário de Cadastro
+> Tela de inserção de nova aplicação de vacina com todos os campos obrigatórios.
+
+![Formulário de Cadastro](docs/screenshots/04-formulario.png)
+
+---
+
+### 5. Formulário Preenchido
+> Formulário com dados preenchidos antes de enviar para a API (POST /api/vacinacao).
+
+![Formulário Preenchido](docs/screenshots/05-formulario-preenchido.png)
+
+---
+
+### 6. Cadastro Realizado com Sucesso
+> Após o cadastro, o sistema retorna para a listagem e o novo registro aparece na tabela (201 Created).
+
+![Cadastro com Sucesso](docs/screenshots/06-cadastro-sucesso.png)
+
+---
+
+### 7. Resumo por Estado e por Vacina
+> Dashboard de análise com totais de doses aplicadas agrupados por estado e por tipo de vacina.
+
+![Resumo](docs/screenshots/07-resumo.png)
