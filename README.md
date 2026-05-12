@@ -8,9 +8,9 @@
 
 | Nome | RA |
 |------|----|
-| [Integrante 1] | [RA] |
-| [Integrante 2] | [RA] |
-| [Integrante 3] | [RA] |
+| Lucas Foschini | — |
+| Nilo de Souza | — |
+| Gabriel Pardo de Sena | — |
 
 ---
 
