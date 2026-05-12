@@ -306,3 +306,47 @@ DELETE http://localhost:8080/api/vacinacao/1
 > Dashboard de análise com totais de doses aplicadas agrupados por estado e por tipo de vacina.
 
 ![Resumo](docs/screenshots/07-resumo.png)
+
+---
+
+## 🔌 Testes da API — Respostas Reais
+
+### 8. GET /api/vacinacao — Lista todos os registros
+> Resposta JSON com todos os registros carregados do CSV + cadastrados manualmente.
+
+![API GET todos](docs/screenshots/08-api-get-todos.png)
+
+---
+
+### 9. GET /api/vacinacao?vacina=BCG — Filtro por Vacina
+> Consulta especializada retornando apenas registros de BCG (status 200 OK).
+
+![API Filtro Vacina](docs/screenshots/09-api-filtro-vacina.png)
+
+---
+
+### 10. GET /api/vacinacao?estado=SP — Filtro por Estado
+> Consulta especializada retornando apenas registros do estado de São Paulo (status 200 OK).
+
+![API Filtro Estado](docs/screenshots/10-api-filtro-estado.png)
+
+---
+
+### 11. GET /api/vacinacao/resumo/por-estado — Resumo Agregado
+> Endpoint de análise retornando totais de doses agrupados por estado.
+
+![API Resumo por Estado](docs/screenshots/11-api-resumo-estado.png)
+
+---
+
+### 12. GET /api/vacinacao/999 — Tratamento de Erro 404
+> ID inexistente retorna HTTP 404 Not Found conforme implementado com `Optional` no Service.
+
+![API 404 Not Found](docs/screenshots/12-api-404.png)
+
+---
+
+### 13. H2 Console — Banco de Dados em Memória
+> Consulta SQL direta na tabela `REGISTRO_VACINACAO` mostrando os 5 registros mais recentes, incluindo os cadastrados pelo frontend.
+
+![H2 Console](docs/screenshots/13-h2-console.png)
