@@ -1,0 +1,32 @@
+# ============================================
+# ImuniData - .gitignore raiz
+# ============================================
+
+# ---- IntelliJ IDEA ----
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# ---- Maven / Backend ----
+imunidata-backend/target/
+imunidata-backend/*.jar
+
+# ---- Node / Frontend ----
+imunidata-frontend/node_modules/
+imunidata-frontend/dist/
+imunidata-frontend/.vite/
+
+# ---- Variáveis de ambiente ----
+.env
+.env.local
+.env.*.local
+
+# ---- Sistema operacional ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Logs ----
+*.log
+npm-debug.log*
