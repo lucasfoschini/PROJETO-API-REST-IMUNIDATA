@@ -350,3 +350,38 @@ DELETE http://localhost:8080/api/vacinacao/1
 > Consulta SQL direta na tabela `REGISTRO_VACINACAO` mostrando os 5 registros mais recentes, incluindo os cadastrados pelo frontend.
 
 ![H2 Console](docs/screenshots/13-h2-console.png)
+
+---
+
+### 14. POST /api/vacinacao — Cadastrar novo registro
+> **201 Created** — Novo registro persistido com ID gerado automaticamente (132 B).
+
+![Insomnia POST 201](docs/screenshots/insomnia-06-post-201.png)
+
+---
+
+### 15. PUT /api/vacinacao/1 — Atualizar registro
+> **200 OK** — Dados do registro ID 1 atualizados com sucesso (136 B).
+
+![Insomnia PUT 200](docs/screenshots/insomnia-07-put-200.png)
+
+---
+
+### 16. DELETE /api/vacinacao/1 — Excluir registro
+> **204 No Content** — Registro removido com sucesso, sem corpo na resposta (0 B).
+
+![Insomnia DELETE 204](docs/screenshots/insomnia-08-delete-204.png)
+
+---
+
+### 17. GET /api/vacinacao/resumo/por-estado — Totais por Estado
+> **200 OK** — Doses agrupadas por estado (SP: 7510, RJ: 7300, AM: 6600...).
+
+![Insomnia Resumo por Estado](docs/screenshots/insomnia-09-resumo-estado.png)
+
+---
+
+### 18. GET /api/vacinacao/resumo/por-vacina — Totais por Vacina
+> **200 OK** — Doses agrupadas por tipo de vacina (Gripe: 31589, BCG: 13790...).
+
+![Insomnia Resumo por Vacina](docs/screenshots/insomnia-10-resumo-vacina.png)
