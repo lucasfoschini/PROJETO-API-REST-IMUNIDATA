@@ -5,10 +5,9 @@
 ---
 
 ## 👥 Integrantes do Grupo
-
 | Nome |
 |------|
-| Lucas Foschini Nilo deSouza |
+| Lucas Foschini Nilo de Souza |
 | Gabriel Pardo de Sena |
 
 ---
