@@ -309,40 +309,40 @@ DELETE http://localhost:8080/api/vacinacao/1
 
 ---
 
-## 🔌 Testes da API — Respostas Reais
+## 🔌 Testes da API — Insomnia
 
 ### 8. GET /api/vacinacao — Lista todos os registros
-> Resposta JSON com todos os registros carregados do CSV + cadastrados manualmente.
+> **200 OK** — Retorna array com todos os registros carregados do CSV (4.7 KB).
 
-![API GET todos](docs/screenshots/08-api-get-todos.png)
+![Insomnia GET todos](docs/screenshots/insomnia-01-get-todos.png)
 
 ---
 
-### 9. GET /api/vacinacao?vacina=BCG — Filtro por Vacina
-> Consulta especializada retornando apenas registros de BCG (status 200 OK).
+### 9. GET /api/vacinacao?vacina=BCG — Filtro por Tipo de Vacina
+> **200 OK** — Consulta especializada retornando apenas registros de BCG (1618 B).
 
-![API Filtro Vacina](docs/screenshots/09-api-filtro-vacina.png)
+![Insomnia Filtro Vacina](docs/screenshots/insomnia-02-filtro-vacina.png)
 
 ---
 
 ### 10. GET /api/vacinacao?estado=SP — Filtro por Estado
-> Consulta especializada retornando apenas registros do estado de São Paulo (status 200 OK).
+> **200 OK** — Consulta especializada retornando apenas registros do estado SP (1226 B).
 
-![API Filtro Estado](docs/screenshots/10-api-filtro-estado.png)
+![Insomnia Filtro Estado](docs/screenshots/insomnia-03-filtro-estado.png)
 
 ---
 
-### 11. GET /api/vacinacao/resumo/por-estado — Resumo Agregado
-> Endpoint de análise retornando totais de doses agrupados por estado.
+### 11. GET /api/vacinacao/1 — Buscar por ID
+> **200 OK** — Retorna o registro específico pelo ID (134 B).
 
-![API Resumo por Estado](docs/screenshots/11-api-resumo-estado.png)
+![Insomnia Buscar por ID](docs/screenshots/insomnia-04-buscar-id.png)
 
 ---
 
 ### 12. GET /api/vacinacao/999 — Tratamento de Erro 404
-> ID inexistente retorna HTTP 404 Not Found conforme implementado com `Optional` no Service.
+> **404 Not Found** — ID inexistente, tratado com `Optional` no Service. Retorno semântico correto.
 
-![API 404 Not Found](docs/screenshots/12-api-404.png)
+![Insomnia 404 Not Found](docs/screenshots/insomnia-05-404.png)
 
 ---
 
