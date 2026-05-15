@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import VacinacaoTable from './components/VacinacaoTable';
 import VacinacaoForm from './components/VacinacaoForm';
 import Filtros from './components/Filtros';
@@ -23,9 +23,17 @@ export default function App() {
   const [aba, setAba] = useState('lista'); // 'lista' | 'cadastro' | 'resumo'
   const [isDragging, setIsDragging] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const feedbackTimeoutRef = useRef(null);
 
   const exibirFeedback = useCallback((mensagem, tipo = 'sucesso') => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
     setFeedback({ mensagem, tipo });
+    feedbackTimeoutRef.current = setTimeout(() => {
+      setFeedback(null);
+      feedbackTimeoutRef.current = null;
+    }, FEEDBACK_DURATION_MS);
   }, []);
 
   const carregarDados = useCallback(async () => {
@@ -50,11 +58,11 @@ export default function App() {
     carregarDados();
   }, [carregarDados]);
 
-  useEffect(() => {
-    if (!feedback) return;
-    const timeout = setTimeout(() => setFeedback(null), FEEDBACK_DURATION_MS);
-    return () => clearTimeout(timeout);
-  }, [feedback]);
+  useEffect(() => () => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
+  }, []);
 
   const processUpload = async (file) => {
     try {
@@ -269,12 +277,18 @@ export default function App() {
           <div
             style={feedback.tipo === 'erro' ? styles.feedbackErro : styles.feedbackSucesso}
             role="alert"
-            aria-live="polite"
+            aria-live={feedback.tipo === 'erro' ? 'assertive' : 'polite'}
           >
             <span>{feedback.mensagem}</span>
             <button
               style={styles.feedbackFechar}
-              onClick={() => setFeedback(null)}
+              onClick={() => {
+                if (feedbackTimeoutRef.current) {
+                  clearTimeout(feedbackTimeoutRef.current);
+                  feedbackTimeoutRef.current = null;
+                }
+                setFeedback(null);
+              }}
               aria-label="Fechar mensagem"
             >
               ✕
