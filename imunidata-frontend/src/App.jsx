@@ -18,8 +18,8 @@ export default function App() {
   const [activeVacinaIndex, setActiveVacinaIndex] = useState(null);
   const [registroEditando, setRegistroEditando] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [aba, setAba] = useState('lista'); 
-  const [isDragging, setIsDragging] = useState(false);// 'lista' | 'cadastro' | 'resumo'
+  const [aba, setAba] = useState('lista'); // 'lista' | 'cadastro' | 'resumo'
+  const [isDragging, setIsDragging] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
   const exibirFeedback = useCallback((mensagem, tipo = 'sucesso') => {
@@ -49,7 +49,7 @@ export default function App() {
   }, [carregarDados]);
 
   useEffect(() => {
-    if (!feedback) return undefined;
+    if (!feedback) return;
     const timeout = setTimeout(() => setFeedback(null), 4000);
     return () => clearTimeout(timeout);
   }, [feedback]);
