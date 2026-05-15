@@ -30,21 +30,9 @@ public class RegistroVacinacaoService {
     @Autowired
     private RegistroVacinacaoRepository repository;
 
-    
-    @PostConstruct
-    public void inicializarDados() {
-        log.info("Iniciando carga de dados do CSV...");
-        carregarCSV();
-        log.info("Carga concluída. Total de registros: {}", repository.count());
-    }
-
-    
-    public void carregarCSV() {
+    public void importarCSV(org.springframework.web.multipart.MultipartFile file) {
         try (
-            Reader reader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("dados_vacinacao.csv"),
-                StandardCharsets.UTF_8
-            );
+            Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
             CSVReader csvReader = new CSVReader(reader)
         ) {
             List<String[]> linhas = csvReader.readAll();

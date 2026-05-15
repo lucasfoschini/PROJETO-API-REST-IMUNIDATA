@@ -20,6 +20,17 @@ public class RegistroVacinacaoController {
     @Autowired
     private RegistroVacinacaoService service;
 
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadCSV(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        try {
+            service.importarCSV(file);
+            return ResponseEntity.ok(Map.of("mensagem", "Arquivo importado com sucesso."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("erro", "Falha ao importar arquivo: " + e.getMessage()));
+        }
+    }
+
     
     @GetMapping
     public ResponseEntity<List<RegistroVacinacao>> listar(

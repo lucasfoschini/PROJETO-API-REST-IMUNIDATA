@@ -42,6 +42,23 @@ export default function App() {
     carregarDados();
   }, [carregarDados]);
 
+  const handleUploadCSV = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      setLoading(true);
+      await vacinacaoService.uploadCSV(file);
+      alert('Arquivo importado com sucesso!');
+      carregarDados();
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao importar arquivo.');
+      setLoading(false);
+    } finally {
+      event.target.value = null;
+    }
+  };
+
   const handleFiltroChange = (campo, valor) => {
     if (campo === 'vacina') setFiltroVacina(valor);
     if (campo === 'estado') setFiltroEstado(valor);
@@ -213,6 +230,20 @@ export default function App() {
               {a === 'lista' ? '📋 Listagem' : a === 'cadastro' ? '➕ Cadastro' : '📊 Resumo'}
             </button>
           ))}
+          <div style={{ flex: 1 }}></div>
+          <button
+            style={{ ...styles.navBtn, padding: '8px 16px', margin: 'auto 0', border: '1px dashed #cbd5e1', borderRadius: '6px', fontSize: '13px', color: '#475569' }}
+            onClick={() => document.getElementById('csv-upload').click()}
+          >
+            📂 Importar CSV
+          </button>
+          <input
+            type="file"
+            id="csv-upload"
+            accept=".csv"
+            style={{ display: 'none' }}
+            onChange={handleUploadCSV}
+          />
         </div>
       </nav>
 
