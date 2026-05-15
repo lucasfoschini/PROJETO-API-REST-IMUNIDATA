@@ -30,37 +30,57 @@ public class RegistroVacinacaoService {
     @Autowired
     private RegistroVacinacaoRepository repository;
 
+    @PostConstruct
+    public void inicializarDados() {
+        log.info("Iniciando carga de dados fixa do CSV...");
+        try (
+            Reader reader = new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream("dados_vacinacao.csv"),
+                StandardCharsets.UTF_8
+            );
+            CSVReader csvReader = new CSVReader(reader)
+        ) {
+            processarLinhasCSV(csvReader);
+            log.info("Carga inicial concluída. Total de registros: {}", repository.count());
+        } catch (Exception e) {
+            log.error("Erro na carga inicial de dados: {}", e.getMessage());
+        }
+    }
+
     public void importarCSV(org.springframework.web.multipart.MultipartFile file) {
         try (
             Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
             CSVReader csvReader = new CSVReader(reader)
         ) {
-            List<String[]> linhas = csvReader.readAll();
-            for (int i = 1; i < linhas.size(); i++) {
-                String[] campos = linhas.get(i);
-
-                if (campos.length < 6) {
-                    log.warn("Linha {} ignorada (campos insuficientes): {}", i, String.join(",", campos));
-                    continue;
-                }
-
-                try {
-                    RegistroVacinacao registro = new RegistroVacinacao();
-                    registro.setMunicipio(campos[0].trim());
-                    registro.setEstado(campos[1].trim());
-                    registro.setVacina(campos[2].trim());
-                    registro.setDose(campos[3].trim());
-                    registro.setQuantidadeAplicada(Integer.parseInt(campos[4].trim()));
-                    registro.setDataRegistro(LocalDate.parse(campos[5].trim()));
-
-                    repository.save(registro);
-                } catch (Exception e) {
-                    log.error("Erro ao processar linha {}: {}", i, e.getMessage());
-                }
-            }
-
+            processarLinhasCSV(csvReader);
         } catch (IOException | CsvException e) {
             log.error("Falha ao carregar o arquivo CSV: {}", e.getMessage());
+        }
+    }
+
+    private void processarLinhasCSV(CSVReader csvReader) throws IOException, CsvException {
+        List<String[]> linhas = csvReader.readAll();
+        for (int i = 1; i < linhas.size(); i++) {
+            String[] campos = linhas.get(i);
+
+            if (campos.length < 6) {
+                log.warn("Linha {} ignorada (campos insuficientes): {}", i, String.join(",", campos));
+                continue;
+            }
+
+            try {
+                RegistroVacinacao registro = new RegistroVacinacao();
+                registro.setMunicipio(campos[0].trim());
+                registro.setEstado(campos[1].trim());
+                registro.setVacina(campos[2].trim());
+                registro.setDose(campos[3].trim());
+                registro.setQuantidadeAplicada(Integer.parseInt(campos[4].trim()));
+                registro.setDataRegistro(LocalDate.parse(campos[5].trim()));
+
+                repository.save(registro);
+            } catch (Exception e) {
+                log.error("Erro ao processar linha {}: {}", i, e.getMessage());
+            }
         }
     }
 
