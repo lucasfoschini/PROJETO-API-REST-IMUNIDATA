@@ -7,10 +7,11 @@ const api = axios.create({
 
 export const vacinacaoService = {
   /** Busca todos ou filtra por vacina e/ou estado */
-  listar: (vacina = '', estado = '') => {
+  listar: (vacina = '', estado = '', dose = '') => {
     const params = {};
     if (vacina) params.vacina = vacina;
     if (estado) params.estado = estado;
+    if (dose) params.dose = dose;
     return api.get('/api/vacinacao', { params });
   },
 

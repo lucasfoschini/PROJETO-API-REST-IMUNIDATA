@@ -3,12 +3,15 @@ import VacinacaoTable from './components/VacinacaoTable';
 import VacinacaoForm from './components/VacinacaoForm';
 import Filtros from './components/Filtros';
 import { vacinacaoService } from './services/api';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Chart } from 'react-google-charts';
 
 export default function App() {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroVacina, setFiltroVacina] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
+  const [filtroDose, setFiltroDose] = useState('');
   const [resumoEstado, setResumoEstado] = useState({});
   const [resumoVacina, setResumoVacina] = useState({});
   const [registroEditando, setRegistroEditando] = useState(null);
@@ -19,7 +22,7 @@ export default function App() {
     setLoading(true);
     try {
       const [res, resEstado, resVacina] = await Promise.all([
-        vacinacaoService.listar(filtroVacina, filtroEstado),
+        vacinacaoService.listar(filtroVacina, filtroEstado, filtroDose),
         vacinacaoService.resumoPorEstado(),
         vacinacaoService.resumoPorVacina(),
       ]);
@@ -31,7 +34,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [filtroVacina, filtroEstado]);
+  }, [filtroVacina, filtroEstado, filtroDose]);
 
   useEffect(() => {
     carregarDados();
@@ -40,6 +43,7 @@ export default function App() {
   const handleFiltroChange = (campo, valor) => {
     if (campo === 'vacina') setFiltroVacina(valor);
     if (campo === 'estado') setFiltroEstado(valor);
+    if (campo === 'dose') setFiltroDose(valor);
   };
 
   const handleEditar = (registro) => {
@@ -55,6 +59,17 @@ export default function App() {
   };
 
   const totalDoses = registros.reduce((acc, r) => acc + r.quantidadeAplicada, 0);
+
+  const dadosGraficoPizza = Object.entries(resumoVacina)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const dadosMapaBrasil = [
+    ['Estado', 'Doses Aplicadas'],
+    ...Object.entries(resumoEstado).map(([estado, total]) => [`BR-${estado}`, total])
+  ];
+
+  const CORES_GRAFICO = ['#2b6cb0', '#48bb78', '#ecc94b', '#ed8936', '#9f7aea', '#fc8181', '#4299e1', '#68d391'];
 
   return (
     <div style={styles.container}>
@@ -104,8 +119,9 @@ export default function App() {
             <Filtros
               vacina={filtroVacina}
               estado={filtroEstado}
+              dose={filtroDose}
               onChange={handleFiltroChange}
-              onLimpar={() => { setFiltroVacina(''); setFiltroEstado(''); }}
+              onLimpar={() => { setFiltroVacina(''); setFiltroEstado(''); setFiltroDose(''); }}
             />
             <VacinacaoTable
               registros={registros}
@@ -130,6 +146,34 @@ export default function App() {
           <div style={styles.resumoGrid}>
             <div style={styles.resumoCard}>
               <h3 style={styles.resumoTitulo}>📍 Doses por Estado</h3>
+
+              <div style={{ width: '100%', aspectRatio: '1 / 1', maxHeight: '500px', margin: '0 auto 24px', overflow: 'hidden' }}>
+
+                <Chart
+                  chartType="GeoChart"
+                  width="100%"
+                  height="100%"
+                  data={dadosMapaBrasil}
+                  options={{
+                    region: 'BR',
+                    domain: 'BR',
+                    displayMode: 'regions',
+                    resolution: 'provinces',
+
+                    colorAxis: { colors: ['#ebf4ff', '#2b6cb0'] },
+
+                    backgroundColor: {
+                      fill: '#ffffff'
+                    },
+
+                    datalessRegionColor: '#ffffff',
+                    defaultColor: '#f7fafc',
+                    keepAspectRatio: true,
+                    legend: 'none',
+                  }}
+                />
+              </div>
+
               <table style={styles.resumoTable}>
                 <thead>
                   <tr>
@@ -176,6 +220,30 @@ export default function App() {
                     ))}
                 </tbody>
               </table>
+
+              <h3 style={{ ...styles.resumoTitulo, marginTop: '32px', textAlign: 'center' }}>Proporção por Vacina</h3>
+              <div style={{ width: '100%', height: 320 }}>
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie
+                      data={dadosGraficoPizza}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(1)}%)`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {dadosGraficoPizza.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={CORES_GRAFICO[index % CORES_GRAFICO.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => value.toLocaleString('pt-BR') + ' doses'} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         )}
@@ -189,7 +257,13 @@ export default function App() {
 }
 
 const styles = {
-  container: { minHeight: '100vh', background: '#edf2f7', fontFamily: "'Segoe UI', sans-serif" },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    background: '#edf2f7',
+    fontFamily: "'Segoe UI', sans-serif"
+  },
   header: {
     background: 'linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%)',
     color: '#fff',
@@ -232,8 +306,15 @@ const styles = {
     transition: 'all 0.2s',
   },
   navBtnAtivo: { color: '#2b6cb0', borderBottomColor: '#2b6cb0' },
-  main: { padding: '24px 32px', maxWidth: 1200, margin: '0 auto' },
-  resumoGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 },
+  main: {
+    flex: 1,
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '24px 32px',
+    maxWidth: 1200,
+    margin: '0 auto'
+  },
+  resumoGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 },
   resumoCard: {
     background: '#fff',
     borderRadius: 12,

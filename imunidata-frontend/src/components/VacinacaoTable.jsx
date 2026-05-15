@@ -1,10 +1,18 @@
+import { useState } from 'react';
 import { vacinacaoService } from '../services/api';
 
 export default function VacinacaoTable({ registros, onEditar, onExcluir, loading }) {
-  const handleExcluir = async (id) => {
-    if (!confirm(`Confirmar exclusão do registro #${id}?`)) return;
+  const [registroParaExcluir, setRegistroParaExcluir] = useState(null);
+
+  const handleExcluir = (id) => {
+    setRegistroParaExcluir(id);
+  };
+
+  const confirmarExclusao = async () => {
+    if (!registroParaExcluir) return;
     try {
-      await vacinacaoService.excluir(id);
+      await vacinacaoService.excluir(registroParaExcluir);
+      setRegistroParaExcluir(null);
       onExcluir();
     } catch (err) {
       if (err.response?.status === 404) {
@@ -12,7 +20,12 @@ export default function VacinacaoTable({ registros, onEditar, onExcluir, loading
       } else {
         alert('Erro ao excluir o registro.');
       }
+      setRegistroParaExcluir(null);
     }
+  };
+
+  const cancelarExclusao = () => {
+    setRegistroParaExcluir(null);
   };
 
   if (loading) {
@@ -37,7 +50,6 @@ export default function VacinacaoTable({ registros, onEditar, onExcluir, loading
         <table style={styles.table}>
           <thead>
             <tr style={styles.thead}>
-              <th style={styles.th}>ID</th>
               <th style={styles.th}>Município</th>
               <th style={styles.th}>UF</th>
               <th style={styles.th}>Vacina</th>
@@ -50,7 +62,6 @@ export default function VacinacaoTable({ registros, onEditar, onExcluir, loading
           <tbody>
             {registros.map((r, idx) => (
               <tr key={r.id} style={idx % 2 === 0 ? styles.trPar : styles.trImpar}>
-                <td style={styles.td}>{r.id}</td>
                 <td style={styles.td}>{r.municipio}</td>
                 <td style={{ ...styles.td, textAlign: 'center' }}>
                   <span style={styles.badge}>{r.estado}</span>
@@ -78,6 +89,20 @@ export default function VacinacaoTable({ registros, onEditar, onExcluir, loading
           </tbody>
         </table>
       </div>
+
+      {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO */}
+      {registroParaExcluir && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h3 style={{ marginTop: 0, color: '#fb5050' }}>Confirmar Exclusão</h3>
+            <p>Tem certeza que deseja excluir permanentemente o registro de vacinação?</p>
+            <div style={styles.modalActions}>
+              <button style={styles.btnCancelar} onClick={cancelarExclusao}>Cancelar</button>
+              <button style={styles.btnConfirmar} onClick={confirmarExclusao}>Sim, excluir</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -103,10 +128,10 @@ const styles = {
   tableWrapper: { overflowX: 'auto' },
   table: { width: '100%', borderCollapse: 'collapse', fontSize: 14 },
   thead: { background: '#2b6cb0' },
-  th: { padding: '12px 16px', color: '#fff', textAlign: 'left', fontWeight: 600, whiteSpace: 'nowrap' },
+  th: { padding: '12px 16px', color: '#fff', textAlign: 'left', fontWeight: 600, whiteSpace: 'nowrap', textAlign: 'center' },
   trPar: { background: '#fff' },
   trImpar: { background: '#f7fafc' },
-  td: { padding: '10px 16px', borderBottom: '1px solid #e2e8f0', color: '#2d3748' },
+  td: { padding: '10px 16px', borderBottom: '1px solid #e2e8f0', color: '#2d3748', textAlign: 'center' },
   badge: {
     background: '#ebf4ff',
     color: '#2b6cb0',
@@ -122,7 +147,7 @@ const styles = {
     fontWeight: 600,
     fontSize: 12,
   },
-  acoes: { display: 'flex', gap: 6 },
+  acoes: { display: 'flex', gap: 6, justifyContent: 'center' },
   btnEditar: { background: '#ecc94b', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer', fontSize: 14 },
   btnExcluir: { background: '#fc8181', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer', fontSize: 14 },
   loading: { textAlign: 'center', padding: 40, color: '#718096', fontSize: 16 },
@@ -134,5 +159,46 @@ const styles = {
     background: '#fff',
     borderRadius: 12,
     boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: '24px',
+    borderRadius: '8px',
+    width: '90%',
+    maxWidth: '400px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  },
+  modalActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '12px',
+    marginTop: '24px',
+  },
+  btnCancelar: {
+    background: '#e2e8f0',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    color: '#4a5568',
+  },
+  btnConfirmar: {
+    background: '#fb5050',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    color: '#fff',
   },
 };
