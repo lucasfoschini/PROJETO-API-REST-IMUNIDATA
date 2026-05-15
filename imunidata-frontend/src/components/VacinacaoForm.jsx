@@ -23,17 +23,14 @@ export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdi
       : campoVazio
   );
   const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState('');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setErro('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErro('');
 
     const payload = {
       ...form,
@@ -55,7 +52,6 @@ export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdi
       if (aoFecharEdicao) aoFecharEdicao();
     } catch (err) {
       const mensagemErro = err.response?.data?.erro || 'Erro ao salvar. Verifique os dados.';
-      setErro(mensagemErro);
       onFeedback?.(mensagemErro, 'erro');
     } finally {
       setLoading(false);
@@ -67,8 +63,6 @@ export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdi
       <h2 style={styles.titulo}>
         {editando ? '✏️ Editar Registro' : '➕ Novo Registro de Vacinação'}
       </h2>
-
-      {erro && <div style={styles.erro}>{erro}</div>}
 
       <form onSubmit={handleSubmit}>
         <div style={styles.grid}>
@@ -171,15 +165,6 @@ const styles = {
     outline: 'none',
     transition: 'border-color 0.2s, box-shadow 0.2s',
     background: '#fff',
-  },
-  erro: {
-    background: '#fff5f5',
-    color: '#b42318',
-    border: '1px solid #fecaca',
-    borderRadius: 10,
-    padding: '10px 14px',
-    marginBottom: 16,
-    fontSize: 14,
   },
   botoes: { display: 'flex', gap: 12, marginTop: 20 },
   btnPrimary: {

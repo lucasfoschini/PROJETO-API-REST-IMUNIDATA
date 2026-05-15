@@ -270,7 +270,11 @@ export default function App() {
             aria-live="polite"
           >
             <span>{feedback.mensagem}</span>
-            <button style={styles.feedbackFechar} onClick={() => setFeedback(null)}>
+            <button
+              style={styles.feedbackFechar}
+              onClick={() => setFeedback(null)}
+              aria-label="Fechar mensagem"
+            >
               ✕
             </button>
           </div>
