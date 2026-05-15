@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '',
+  baseURL: 'https://imunidata-back.onrender.com/',
   headers: { 'Content-Type': 'application/json' },
 });
 
