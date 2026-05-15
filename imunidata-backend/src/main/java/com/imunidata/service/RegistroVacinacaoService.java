@@ -21,13 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Camada de serviço responsável pela lógica de negócio do sistema ImuniData.
- * 
- * O uso de Optional é um princípio fundamental aqui: ele força o código
- * que chama os métodos a lidar explicitamente com a possibilidade de
- * ausência de dados, eliminando NullPointerExceptions silenciosas.
- */
+
 @Service
 public class RegistroVacinacaoService {
 
@@ -36,14 +30,7 @@ public class RegistroVacinacaoService {
     @Autowired
     private RegistroVacinacaoRepository repository;
 
-    // =========================================================
-    // CARGA INICIAL DE DADOS (CSV)
-    // =========================================================
-
-    /**
-     * Executado automaticamente após o Spring inicializar o bean.
-     * Carrega os dados do arquivo CSV para popular o banco H2.
-     */
+    
     @PostConstruct
     public void inicializarDados() {
         log.info("Iniciando carga de dados do CSV...");
@@ -51,13 +38,7 @@ public class RegistroVacinacaoService {
         log.info("Carga concluída. Total de registros: {}", repository.count());
     }
 
-    /**
-     * Lê o arquivo dados_vacinacao.csv do classpath e persiste cada linha
-     * como um RegistroVacinacao no banco H2.
-     *
-     * Estrutura do CSV:
-     * municipio, estado, vacina, dose, quantidadeAplicada, dataRegistro
-     */
+    
     public void carregarCSV() {
         try (
             Reader reader = new InputStreamReader(
@@ -67,8 +48,6 @@ public class RegistroVacinacaoService {
             CSVReader csvReader = new CSVReader(reader)
         ) {
             List<String[]> linhas = csvReader.readAll();
-
-            // Pula o cabeçalho (linha 0)
             for (int i = 1; i < linhas.size(); i++) {
                 String[] campos = linhas.get(i);
 
@@ -97,41 +76,23 @@ public class RegistroVacinacaoService {
         }
     }
 
-    // =========================================================
-    // CRUD
-    // =========================================================
-
-    /** Retorna todos os registros de vacinação cadastrados. */
+    
     public List<RegistroVacinacao> listarTodos() {
         return repository.findAll();
     }
 
-    /**
-     * Busca um registro por ID usando Optional.
-     *
-     * Por que Optional? Se usássemos repository.getById(id) sem Optional,
-     * um ID inexistente lançaria uma exceção genérica em tempo de execução.
-     * Com Optional, deixamos explícito que "pode não existir" e tratamos
-     * o caso de ausência de forma controlada.
-     *
-     * @throws NoSuchElementException se o ID não for encontrado
-     */
+    
     public Optional<RegistroVacinacao> buscarPorId(Long id) {
         return repository.findById(id);
     }
 
-    /** Cadastra um novo registro de vacinação. */
+    
     public RegistroVacinacao cadastrar(RegistroVacinacao registro) {
         log.info("Cadastrando novo registro: vacina={}, municipio={}", registro.getVacina(), registro.getMunicipio());
         return repository.save(registro);
     }
 
-    /**
-     * Atualiza os dados de um registro existente.
-     * Usa Optional para verificar existência antes de atualizar.
-     *
-     * @throws NoSuchElementException se o ID não existir
-     */
+    
     public RegistroVacinacao atualizar(Long id, RegistroVacinacao dadosNovos) {
         RegistroVacinacao existente = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Registro não encontrado com ID: " + id));
@@ -147,12 +108,7 @@ public class RegistroVacinacaoService {
         return repository.save(existente);
     }
 
-    /**
-     * Exclui um registro pelo ID.
-     * Verifica existência antes de deletar para retornar erro semântico correto.
-     *
-     * @throws NoSuchElementException se o ID não existir
-     */
+    
     public void excluir(Long id) {
         if (!repository.existsById(id)) {
             throw new NoSuchElementException("Registro não encontrado com ID: " + id);
@@ -161,24 +117,17 @@ public class RegistroVacinacaoService {
         repository.deleteById(id);
     }
 
-    // =========================================================
-    // CONSULTAS ESPECIALIZADAS
-    // =========================================================
-
-    /** Retorna registros filtrados por tipo de vacina. */
+    
     public List<RegistroVacinacao> buscarPorVacina(String vacina) {
         return repository.findByVacina(vacina);
     }
 
-    /** Retorna registros filtrados por estado (UF). */
+    
     public List<RegistroVacinacao> buscarPorEstado(String estado) {
         return repository.findByEstado(estado);
     }
 
-    /**
-        * Filtro combinado opcional: vacina e/ou estado e/ou dose.
-     * Parâmetros nulos ou vazios são ignorados no filtro.
-     */
+    
     public List<RegistroVacinacao> filtrar(String vacina, String estado, String dose) {
         String v = (vacina != null && !vacina.isBlank()) ? vacina : null;
         String e = (estado != null && !estado.isBlank()) ? estado : null;
@@ -186,7 +135,7 @@ public class RegistroVacinacaoService {
         return repository.filtrar(v, e, d);
     }
 
-    /** Retorna totais de doses agrupados por estado (para dashboard). */
+    
     public Map<String, Long> totalPorEstado() {
         return repository.totalDosesPorEstado()
                 .stream()
@@ -196,7 +145,7 @@ public class RegistroVacinacaoService {
                 ));
     }
 
-    /** Retorna totais de doses agrupados por vacina (para dashboard). */
+    
     public Map<String, Long> totalPorVacina() {
         return repository.totalDosesPorVacina()
                 .stream()
