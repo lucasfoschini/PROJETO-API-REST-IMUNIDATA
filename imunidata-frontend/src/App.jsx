@@ -18,7 +18,8 @@ export default function App() {
   const [activeVacinaIndex, setActiveVacinaIndex] = useState(null);
   const [registroEditando, setRegistroEditando] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [aba, setAba] = useState('lista'); // 'lista' | 'cadastro' | 'resumo'
+  const [aba, setAba] = useState('lista'); 
+  const [isDragging, setIsDragging] = useState(false);// 'lista' | 'cadastro' | 'resumo'
 
   const carregarDados = useCallback(async () => {
     setLoading(true);
@@ -42,9 +43,7 @@ export default function App() {
     carregarDados();
   }, [carregarDados]);
 
-  const handleUploadCSV = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const processUpload = async (file) => {
     try {
       setLoading(true);
       await vacinacaoService.uploadCSV(file);
@@ -53,9 +52,27 @@ export default function App() {
     } catch (err) {
       console.error(err);
       alert('Erro ao importar arquivo.');
-      setLoading(false);
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUploadCSV = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      processUpload(file);
       event.target.value = null;
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.csv')) {
+      processUpload(file);
+    } else {
+      alert('Por favor, selecione um arquivo .csv válido.');
     }
   };
 
@@ -263,16 +280,35 @@ export default function App() {
               aoFecharEdicao={() => { setRegistroEditando(null); setAba('lista'); }}
             />
             
-            <div style={{ background: '#fff', padding: '32px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--stroke)' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#0f172a' }}>📂 Importação em Massa</h3>
-              <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>
-                Utilize esta opção para popular o banco de dados enviando um arquivo CSV padronizado (Ex: amostra OpenDataSUS).
+            <div 
+              style={{ 
+                background: isDragging ? 'rgba(15, 118, 110, 0.05)' : '#fff', 
+                padding: '40px 32px', 
+                borderRadius: '16px', 
+                boxShadow: 'var(--shadow-sm)', 
+                border: isDragging ? '2px dashed var(--primary-strong)' : '1px solid var(--stroke)',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+                cursor: 'pointer'
+              }}
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('csv-upload').click()}
+            >
+              <div style={{ fontSize: '40px', marginBottom: '16px' }}>📂</div>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#0f172a' }}>Importação em Massa</h3>
+              <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px', maxWidth: '400px', margin: '0 auto 20px auto' }}>
+                Clique para selecionar ou arraste e solte o seu arquivo CSV (Padrão OpenDataSUS) aqui.
               </p>
               <button
-                style={{ background: '#f8fafc', padding: '12px 24px', border: '2px dashed #cbd5e1', borderRadius: '8px', fontSize: '14px', color: '#0f172a', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
-                onClick={() => document.getElementById('csv-upload').click()}
+                style={{ background: '#f8fafc', padding: '10px 24px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '14px', color: '#0f172a', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  document.getElementById('csv-upload').click();
+                }}
               >
-                Escolher arquivo .csv
+                Escolher arquivo
               </button>
               <input
                 type="file"
