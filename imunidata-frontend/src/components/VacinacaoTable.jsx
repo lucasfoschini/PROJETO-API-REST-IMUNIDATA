@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { vacinacaoService } from '../services/api';
 
-export default function VacinacaoTable({ registros, onEditar, onExcluir, loading }) {
+export default function VacinacaoTable({ registros, onEditar, onExcluir, loading, onFeedback }) {
   const [registroParaExcluir, setRegistroParaExcluir] = useState(null);
 
   const handleExcluir = (id) => {
@@ -14,12 +14,12 @@ export default function VacinacaoTable({ registros, onEditar, onExcluir, loading
       await vacinacaoService.excluir(registroParaExcluir);
       setRegistroParaExcluir(null);
       onExcluir();
+      onFeedback?.('Registro excluído com sucesso!', 'sucesso');
     } catch (err) {
-      if (err.response?.status === 404) {
-        alert('Registro não encontrado (404 Not Found).');
-      } else {
-        alert('Erro ao excluir o registro.');
-      }
+      const mensagemErro = err.response?.status === 404
+        ? 'Registro não encontrado (404 Not Found).'
+        : 'Erro ao excluir o registro.';
+      onFeedback?.(mensagemErro, 'erro');
       setRegistroParaExcluir(null);
     }
   };

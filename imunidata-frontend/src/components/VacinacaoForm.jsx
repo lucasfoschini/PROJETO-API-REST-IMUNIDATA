@@ -14,7 +14,7 @@ const campoVazio = {
   dataRegistro: '',
 };
 
-export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdicao }) {
+export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdicao, onFeedback }) {
   const editando = !!registroParaEditar;
 
   const [form, setForm] = useState(
@@ -46,11 +46,16 @@ export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdi
       } else {
         await vacinacaoService.cadastrar(payload);
       }
-      onSalvo();
+      const mensagemSucesso = editando
+        ? 'Registro atualizado com sucesso!'
+        : 'Registro cadastrado com sucesso!';
+      onSalvo(mensagemSucesso);
       if (!editando) setForm(campoVazio);
       if (aoFecharEdicao) aoFecharEdicao();
     } catch (err) {
-      setErro(err.response?.data?.erro || 'Erro ao salvar. Verifique os dados.');
+      const mensagemErro = err.response?.data?.erro || 'Erro ao salvar. Verifique os dados.';
+      setErro(mensagemErro);
+      onFeedback?.(mensagemErro, 'erro');
     } finally {
       setLoading(false);
     }
