@@ -99,11 +99,10 @@ export default function App() {
     setMostrarFormulario(true);
   };
 
-  const handleSalvo = (mensagem) => {
+  const handleSalvo = () => {
     carregarDados();
     setRegistroEditando(null);
     setAba('lista');
-    if (mensagem) exibirFeedback(mensagem, 'sucesso');
   };
 
   const formatarNumero = (valor) => Number(valor || 0).toLocaleString('pt-BR');

@@ -49,7 +49,8 @@ export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdi
       const mensagemSucesso = editando
         ? 'Registro atualizado com sucesso!'
         : 'Registro cadastrado com sucesso!';
-      onSalvo(mensagemSucesso);
+      onFeedback?.(mensagemSucesso, 'sucesso');
+      onSalvo();
       if (!editando) setForm(campoVazio);
       if (aoFecharEdicao) aoFecharEdicao();
     } catch (err) {
