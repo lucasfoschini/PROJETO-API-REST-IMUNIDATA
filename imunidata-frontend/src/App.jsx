@@ -230,20 +230,6 @@ export default function App() {
               {a === 'lista' ? '📋 Listagem' : a === 'cadastro' ? '➕ Cadastro' : '📊 Resumo'}
             </button>
           ))}
-          <div style={{ flex: 1 }}></div>
-          <button
-            style={{ ...styles.navBtn, padding: '8px 16px', margin: 'auto 0', border: '1px dashed #cbd5e1', borderRadius: '6px', fontSize: '13px', color: '#475569' }}
-            onClick={() => document.getElementById('csv-upload').click()}
-          >
-            📂 Importar CSV
-          </button>
-          <input
-            type="file"
-            id="csv-upload"
-            accept=".csv"
-            style={{ display: 'none' }}
-            onChange={handleUploadCSV}
-          />
         </div>
       </nav>
 
@@ -270,11 +256,33 @@ export default function App() {
 
         {/* ABA CADASTRO */}
         {aba === 'cadastro' && (
-          <VacinacaoForm
-            onSalvo={handleSalvo}
-            registroParaEditar={registroEditando}
-            aoFecharEdicao={() => { setRegistroEditando(null); setAba('lista'); }}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <VacinacaoForm
+              onSalvo={handleSalvo}
+              registroParaEditar={registroEditando}
+              aoFecharEdicao={() => { setRegistroEditando(null); setAba('lista'); }}
+            />
+            
+            <div style={{ background: '#fff', padding: '32px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--stroke)' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#0f172a' }}>📂 Importação em Massa</h3>
+              <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>
+                Utilize esta opção para popular o banco de dados enviando um arquivo CSV padronizado (Ex: amostra OpenDataSUS).
+              </p>
+              <button
+                style={{ background: '#f8fafc', padding: '12px 24px', border: '2px dashed #cbd5e1', borderRadius: '8px', fontSize: '14px', color: '#0f172a', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                onClick={() => document.getElementById('csv-upload').click()}
+              >
+                Escolher arquivo .csv
+              </button>
+              <input
+                type="file"
+                id="csv-upload"
+                accept=".csv"
+                style={{ display: 'none' }}
+                onChange={handleUploadCSV}
+              />
+            </div>
+          </div>
         )}
 
         {/* ABA RESUMO */}
