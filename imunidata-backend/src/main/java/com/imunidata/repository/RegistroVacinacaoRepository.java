@@ -54,13 +54,15 @@ public interface RegistroVacinacaoRepository extends JpaRepository<RegistroVacin
     List<Object[]> totalDosesPorVacina();
 
     /**
-     * Filtro combinado opcional: vacina e/ou estado podem ser nulos.
+     * Filtro combinado opcional: vacina, estado e/ou dose podem ser nulos.
      */
     @Query("SELECT r FROM RegistroVacinacao r WHERE " +
            "(:vacina IS NULL OR r.vacina = :vacina) AND " +
-           "(:estado IS NULL OR r.estado = :estado)")
+           "(:estado IS NULL OR r.estado = :estado) AND " +
+           "(:dose IS NULL OR r.dose = :dose)")
     List<RegistroVacinacao> filtrar(
             @Param("vacina") String vacina,
-            @Param("estado") String estado
+            @Param("estado") String estado,
+            @Param("dose") String dose
     );
 }

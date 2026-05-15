@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { vacinacaoService } from '../services/api';
 
 const VACINAS = ['BCG', 'Gripe', 'Polio', 'Pentavalente', 'Varicela', 'Hepatite B', 'Rotavírus', 'Pneumocócica'];
-const DOSES = ['1ª Dose', '2ª Dose', '3ª Dose', 'Reforço'];
+const DOSES = ['1ª Dose', '2ª Dose', 'Reforço'];
 const ESTADOS = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
 
 const campoVazio = {
@@ -146,50 +146,53 @@ export default function VacinacaoForm({ onSalvo, registroParaEditar, aoFecharEdi
 
 const styles = {
   card: {
-    background: '#fff',
-    borderRadius: 12,
+    background: 'var(--card)',
+    borderRadius: 18,
     padding: '24px 28px',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+    border: '1px solid var(--stroke)',
+    boxShadow: 'var(--shadow-md)',
     marginBottom: 24,
   },
-  titulo: { margin: '0 0 20px', fontSize: 18, color: '#1a365d' },
-  grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 },
+  titulo: { margin: '0 0 20px', fontSize: 20, color: 'var(--ink)' },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 },
   campo: { display: 'flex', flexDirection: 'column', gap: 4 },
-  label: { fontSize: 13, fontWeight: 600, color: '#4a5568' },
+  label: { fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: 0.3 },
   input: {
-    padding: '8px 12px',
-    border: '1px solid #cbd5e0',
-    borderRadius: 6,
+    padding: '10px 12px',
+    border: '1px solid var(--stroke)',
+    borderRadius: 10,
     fontSize: 14,
     outline: 'none',
-    transition: 'border-color 0.2s',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    background: '#fff',
   },
   erro: {
     background: '#fff5f5',
-    color: '#c53030',
-    border: '1px solid #fc8181',
-    borderRadius: 6,
+    color: '#b42318',
+    border: '1px solid #fecaca',
+    borderRadius: 10,
     padding: '10px 14px',
     marginBottom: 16,
     fontSize: 14,
   },
   botoes: { display: 'flex', gap: 12, marginTop: 20 },
   btnPrimary: {
-    background: '#2b6cb0',
+    background: 'var(--primary)',
     color: '#fff',
     border: 'none',
-    borderRadius: 6,
-    padding: '10px 24px',
+    borderRadius: 10,
+    padding: '11px 24px',
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
+    boxShadow: 'var(--shadow-sm)',
   },
   btnSecondary: {
-    background: '#e2e8f0',
-    color: '#4a5568',
+    background: '#f1f5f9',
+    color: '#334155',
     border: 'none',
-    borderRadius: 6,
-    padding: '10px 24px',
+    borderRadius: 10,
+    padding: '11px 24px',
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',

@@ -176,13 +176,14 @@ public class RegistroVacinacaoService {
     }
 
     /**
-     * Filtro combinado opcional: vacina e/ou estado.
+        * Filtro combinado opcional: vacina e/ou estado e/ou dose.
      * Parâmetros nulos ou vazios são ignorados no filtro.
      */
-    public List<RegistroVacinacao> filtrar(String vacina, String estado) {
+    public List<RegistroVacinacao> filtrar(String vacina, String estado, String dose) {
         String v = (vacina != null && !vacina.isBlank()) ? vacina : null;
         String e = (estado != null && !estado.isBlank()) ? estado : null;
-        return repository.filtrar(v, e);
+        String d = (dose != null && !dose.isBlank()) ? dose : null;
+        return repository.filtrar(v, e, d);
     }
 
     /** Retorna totais de doses agrupados por estado (para dashboard). */

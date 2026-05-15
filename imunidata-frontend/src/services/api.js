@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocalhost ? 'http://localhost:8080/' : 'https://imunidata-back.onrender.com/';
+
 const api = axios.create({
-  baseURL: 'https://imunidata-back.onrender.com/',
+  baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 

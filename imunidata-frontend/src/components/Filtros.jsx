@@ -1,6 +1,6 @@
 const VACINAS = ['', 'BCG', 'Gripe', 'Polio', 'Pentavalente', 'Varicela', 'Hepatite B', 'Rotavírus', 'Pneumocócica'];
 const ESTADOS = ['','AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
-const DOSES = ['', '1ª Dose', '2ª Dose', '3ª Dose', 'Reforço'];
+const DOSES = ['', '1ª Dose', '2ª Dose', 'Reforço'];
 
 export default function Filtros({ vacina, estado, dose, onChange, onLimpar }) {
   return (
@@ -12,7 +12,7 @@ export default function Filtros({ vacina, estado, dose, onChange, onLimpar }) {
         value={vacina}
         onChange={(e) => onChange('vacina', e.target.value)}
       >
-        <option value="">Vacinas</option>
+        <option value="">Todas as vacinas</option>
         {VACINAS.filter(Boolean).map(v => <option key={v} value={v}>{v}</option>)}
       </select>
 
@@ -21,7 +21,7 @@ export default function Filtros({ vacina, estado, dose, onChange, onLimpar }) {
         value={estado}
         onChange={(e) => onChange('estado', e.target.value)}
       >
-        <option value="">Estados</option>
+        <option value="">Todos os estados</option>
         {ESTADOS.filter(Boolean).map(uf => <option key={uf} value={uf}>{uf}</option>)}
       </select>
 
@@ -30,7 +30,7 @@ export default function Filtros({ vacina, estado, dose, onChange, onLimpar }) {
         value={dose}
         onChange={(e) => onChange('dose', e.target.value)}
       >
-        <option value="">Dose</option>
+        <option value="">Todas as doses</option>
         {DOSES.filter(Boolean).map(d => <option key={d} value={d}>{d}</option>)}
       </select>
 
@@ -48,30 +48,34 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 12,
-    background: '#fff',
-    padding: '14px 20px',
-    borderRadius: 10,
-    boxShadow: '0 1px 6px rgba(0,0,0,0.07)',
+    background: 'rgba(255, 255, 255, 0.9)',
+    padding: '14px 18px',
+    borderRadius: 16,
+    border: '1px solid var(--stroke)',
+    boxShadow: 'var(--shadow-sm)',
     marginBottom: 16,
     flexWrap: 'wrap',
   },
-  label: { fontWeight: 600, color: '#4a5568', fontSize: 14 },
+  label: { fontWeight: 600, color: 'var(--muted)', fontSize: 13, letterSpacing: 0.2 },
   select: {
-    padding: '7px 12px',
-    border: '1px solid #cbd5e0',
-    borderRadius: 6,
+    padding: '9px 12px',
+    border: '1px solid var(--stroke)',
+    borderRadius: 10,
     fontSize: 14,
-    background: '#f7fafc',
+    minWidth: 160,
+    background: '#fff',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7)',
     cursor: 'pointer',
   },
   btnLimpar: {
-    background: '#e53e3e',
+    background: 'var(--primary)',
     color: '#fff',
     border: 'none',
-    borderRadius: 6,
-    padding: '7px 14px',
+    borderRadius: 10,
+    padding: '9px 14px',
     fontSize: 13,
     cursor: 'pointer',
     fontWeight: 600,
+    boxShadow: 'var(--shadow-sm)',
   },
 };

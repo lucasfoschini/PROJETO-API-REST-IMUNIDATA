@@ -33,23 +33,25 @@ public class RegistroVacinacaoController {
 
     /**
      * GET /api/vacinacao
-     * Lista todos os registros de vacinação.
-     * Suporta filtros opcionais via query params: ?vacina=BCG&estado=SP
+    * Lista todos os registros de vacinação.
+    * Suporta filtros opcionais via query params: ?vacina=BCG&estado=SP&dose=1ª%20Dose
      *
      * @return 200 OK com a lista de registros
      */
     @GetMapping
     public ResponseEntity<List<RegistroVacinacao>> listar(
             @RequestParam(required = false) String vacina,
-            @RequestParam(required = false) String estado
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String dose
     ) {
         List<RegistroVacinacao> registros;
 
         boolean temFiltro = (vacina != null && !vacina.isBlank()) ||
-                            (estado != null && !estado.isBlank());
+                            (estado != null && !estado.isBlank()) ||
+                            (dose != null && !dose.isBlank());
 
         if (temFiltro) {
-            registros = service.filtrar(vacina, estado);
+            registros = service.filtrar(vacina, estado, dose);
         } else {
             registros = service.listarTodos();
         }
