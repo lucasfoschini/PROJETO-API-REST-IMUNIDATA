@@ -6,6 +6,8 @@ import { vacinacaoService } from './services/api';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, Sector } from 'recharts';
 import { Chart } from 'react-google-charts';
 
+const FEEDBACK_DURATION_MS = 4000;
+
 export default function App() {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export default function App() {
 
   useEffect(() => {
     if (!feedback) return;
-    const timeout = setTimeout(() => setFeedback(null), 4000);
+    const timeout = setTimeout(() => setFeedback(null), FEEDBACK_DURATION_MS);
     return () => clearTimeout(timeout);
   }, [feedback]);
 
