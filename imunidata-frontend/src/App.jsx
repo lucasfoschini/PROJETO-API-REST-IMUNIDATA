@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import VacinacaoTable from './components/VacinacaoTable';
 import VacinacaoForm from './components/VacinacaoForm';
 import Filtros from './components/Filtros';
 import { vacinacaoService } from './services/api';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, Sector } from 'recharts';
 import { Chart } from 'react-google-charts';
+
+const FEEDBACK_DURATION_MS = 4000;
 
 export default function App() {
   const [registros, setRegistros] = useState([]);
@@ -18,8 +20,21 @@ export default function App() {
   const [activeVacinaIndex, setActiveVacinaIndex] = useState(null);
   const [registroEditando, setRegistroEditando] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [aba, setAba] = useState('lista'); 
-  const [isDragging, setIsDragging] = useState(false);// 'lista' | 'cadastro' | 'resumo'
+  const [aba, setAba] = useState('lista'); // 'lista' | 'cadastro' | 'resumo'
+  const [isDragging, setIsDragging] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+  const feedbackTimeoutRef = useRef(null);
+
+  const exibirFeedback = useCallback((mensagem, tipo = 'sucesso') => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
+    setFeedback({ mensagem, tipo });
+    feedbackTimeoutRef.current = setTimeout(() => {
+      setFeedback(null);
+      feedbackTimeoutRef.current = null;
+    }, FEEDBACK_DURATION_MS);
+  }, []);
 
   const carregarDados = useCallback(async () => {
     setLoading(true);
@@ -42,6 +57,12 @@ export default function App() {
   useEffect(() => {
     carregarDados();
   }, [carregarDados]);
+
+  useEffect(() => () => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
+  }, []);
 
   const processUpload = async (file) => {
     try {
@@ -252,6 +273,29 @@ export default function App() {
 
       {/* CONTEÚDO */}
       <main style={styles.main}>
+        {feedback && (
+          <div
+            style={feedback.tipo === 'erro' ? styles.feedbackErro : styles.feedbackSucesso}
+            role="alert"
+            aria-live={feedback.tipo === 'erro' ? 'assertive' : 'polite'}
+          >
+            <span>{feedback.mensagem}</span>
+            <button
+              style={styles.feedbackFechar}
+              onClick={() => {
+                if (feedbackTimeoutRef.current) {
+                  clearTimeout(feedbackTimeoutRef.current);
+                  feedbackTimeoutRef.current = null;
+                }
+                setFeedback(null);
+              }}
+              aria-label="Fechar mensagem"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* ABA LISTAGEM */}
         {aba === 'lista' && (
           <>
@@ -267,6 +311,7 @@ export default function App() {
               loading={loading}
               onEditar={handleEditar}
               onExcluir={carregarDados}
+              onFeedback={exibirFeedback}
             />
           </>
         )}
@@ -278,6 +323,7 @@ export default function App() {
               onSalvo={handleSalvo}
               registroParaEditar={registroEditando}
               aoFecharEdicao={() => { setRegistroEditando(null); setAba('lista'); }}
+              onFeedback={exibirFeedback}
             />
             
             <div 
@@ -515,6 +561,43 @@ const styles = {
   },
   statNum: { display: 'block', fontSize: 20, fontWeight: 800 },
   statLabel: { display: 'block', fontSize: 11, opacity: 0.9, marginTop: 4, textTransform: 'uppercase', letterSpacing: 0.6 },
+  feedbackSucesso: {
+    marginBottom: 16,
+    background: '#ecfdf3',
+    color: '#027a48',
+    border: '1px solid #a6f4c5',
+    borderRadius: 10,
+    padding: '10px 14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    fontSize: 14,
+    fontWeight: 600,
+  },
+  feedbackErro: {
+    marginBottom: 16,
+    background: '#fff5f5',
+    color: '#b42318',
+    border: '1px solid #fecaca',
+    borderRadius: 10,
+    padding: '10px 14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    fontSize: 14,
+    fontWeight: 600,
+  },
+  feedbackFechar: {
+    background: 'transparent',
+    border: 'none',
+    color: 'inherit',
+    cursor: 'pointer',
+    fontSize: 16,
+    lineHeight: 1,
+    padding: 0,
+  },
   nav: {
     background: 'rgba(255,255,255,0.9)',
     boxShadow: '0 4px 16px rgba(15, 23, 42, 0.04)',
